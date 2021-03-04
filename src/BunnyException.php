@@ -11,11 +11,10 @@ class BunnyException extends Exception
 	 */
 	private $statusCode;
 
-    // Die Exception neu definieren, damit die Mitteilung nicht optional ist
-    public function __construct(string $message, int $statusCode, int $code = 0, Exception $previous = null)
+    public function __construct(string $message, int $statusCode, Exception $previous = null)
     {
-    	parent::__construct($message, $code, $previous);
-    	$this->setStatusCode($statusCode);
+    	parent::__construct($message, $statusCode, $previous);
+    	$this->statusCode = $statusCode;
     }
 
     /**
@@ -24,13 +23,5 @@ class BunnyException extends Exception
 	public function getStatusCode(): int
 	{
 		return $this->statusCode;
-	}
-
-	/**
-	 * @param int $statusCode
-	 */
-	private function setStatusCode(int $statusCode): void
-	{
-		$this->statusCode = $statusCode;
 	}
 }

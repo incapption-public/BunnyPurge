@@ -9,10 +9,14 @@ class BunnyPurgeTest extends TestCase
 	protected function setUp() : void
     {
         if(!isset($GLOBALS['TEST_URL']))
+        {
         	throw new InvalidArgumentException("Please define the TEST_URL variable in phpunit.xml");
+        }
 
         if(!isset($GLOBALS['API_KEY']))
+        {
         	throw new InvalidArgumentException("Please define the API_KEY variable in phpunit.xml");
+        }
     }
 
 	public function testConstructorThrowsExceptionEmptyApiKey()
@@ -28,6 +32,14 @@ class BunnyPurgeTest extends TestCase
 
         $client = new BunnyPurge('TEST');
 	    $client->purge($GLOBALS['TEST_URL']);
+    }
+
+    public function testPurgeThrowsExceptionNotExistingFile()
+    {
+        $this->expectException(BunnyException::class);
+
+        $client = new BunnyPurge($GLOBALS['API_KEY']);
+	    $client->purge('https://example.b-cdn.net/example.jpg');
     }
 
     public function testValidRequest()

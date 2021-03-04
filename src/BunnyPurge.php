@@ -4,7 +4,7 @@ namespace Incapption\BunnyPurge;
 
 use GuzzleHttp\Client;
 use InvalidArgumentException;
-use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Bunny CDN class for purging files
@@ -26,6 +26,11 @@ class BunnyPurge
 	 */
 	private $client;
 
+	/**
+	 * BunnyPurge constructor.
+	 *
+	 * @param string $apiKey The bunny.net API Key
+	 */
 	public function __construct(string $apiKey)
 	{
 		if(empty($apiKey))
@@ -45,11 +50,19 @@ class BunnyPurge
 				'Accept' => 'application/json',
 				'Content-Type' => 'application/json'
 			],
-			'http_errors' => false,
+			'http_errors' => true,
 			'timeout'  => 5.0
 		]);
 	}
 
+	/**
+	 * Purge a file from cache
+	 *
+	 * @param string $url The URL to purge
+	 *
+	 * @throws BunnyException Thrown for non 200 status codes
+	 * @throws GuzzleException Thrown in case of request exceptions
+	 */
 	public function purge(string $url) : void
 	{
 		$response = $this->client->request('POST', 'purge', [
