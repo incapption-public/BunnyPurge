@@ -4,6 +4,7 @@ namespace Incapption\BunnyPurge;
 
 use GuzzleHttp\Client;
 use InvalidArgumentException;
+use GuzzleHttp\Exception\BadResponseException;
 
 /**
  * Bunny CDN class for purging files
@@ -25,12 +26,7 @@ class BunnyPurge
 	 */
 	private $client;
 
-	/**
-	 * @var bool
-	 */
-	private $throwHttpExceptions;
-
-	public function __construct(string $apiKey, bool $throwHttpExceptions = true)
+	public function __construct(string $apiKey)
 	{
 		if(empty($apiKey))
 		{
@@ -41,21 +37,32 @@ class BunnyPurge
 			$this->apiKey = $apiKey;
 		}
 
-		$this->throwHttpExceptions = (bool)$throwHttpExceptions;
-
 		$this->client = new Client([
+			'allow_redirects' => false,
 			'base_uri' => self::BUNNY_API_URL,
+			'headers' => [
+				'AccessKey' => $this->apiKey,
+				'Accept' => 'application/json',
+				'Content-Type' => 'application/json'
+			],
+			'http_errors' => false,
 			'timeout'  => 5.0
 		]);
 	}
 
-	public function purge(string $url) : string
+	public function purge(string $url) : void
 	{
 		$response = $this->client->request('POST', 'purge', [
-			'http_errors' => $this->throwHttpExceptions,
-			'query' => ['url' => urlencode($url)]
+			'query' => [
+				'url' => urlencode($url)
+			]
 		]);
 
-		return $response->getBody()->getContents();
+		if($response->getStatusCode() !== 200)
+		{
+			throw new BunnyException(
+				$response->getBody()->getContents(),
+				$response->getStatusCode());
+		}
 	}
 }
