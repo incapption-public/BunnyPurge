@@ -1,0 +1,27 @@
+{
+  "name": "incapption/bunny-purge",
+  "description": "Bunny CDN API class for purging files",
+  "type": "library",
+  "license": "MIT",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "incapption",
+      "email": "contact@29palms.de"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/incapption/BunnyPurge"
+    }
+  ],
+  "require": {
+    "php": ">=7.3"
+  },
+  "autoload": {
+      "psr-4": {
+          "Incapption\\BunnyPurge\\": "src/"
+      }
+  }
+}
